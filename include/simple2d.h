@@ -8,21 +8,33 @@ extern "C" {
 
 // Set Platform Constants //////////////////////////////////////////////////////
 
-// If ARM, assume GLES
-#ifdef __arm__
-  #define GLES true
-#else
-  #define GLES false
+// Apple
+#ifdef __APPLE__
+  #include "TargetConditionals.h"
+  #if TARGET_OS_OSX
+    #define MACOS true
+  #elif TARGET_OS_IOS
+    #define IOS   true
+  #elif TARGET_OS_TV
+    #define TVOS  true
+  #endif
 #endif
 
-// If Windows
+// Windows
 #ifdef _WIN32
   #define WINDOWS true
 #endif
 
-// If Windows and MinGW
+// Windows and MinGW
 #ifdef __MINGW32__
   #define MINGW true
+#endif
+
+// GLES
+#if defined(__arm__) || IOS || TVOS
+  #define GLES true
+#else
+  #define GLES false
 #endif
 
 // Includes ////////////////////////////////////////////////////////////////////
