@@ -55,7 +55,11 @@ extern "C" {
 #endif
 
 // SDL
-#include <SDL2/SDL.h>
+#if IOS || TVOS
+  #include "SDL2/SDL.h"
+#else
+  #include <SDL2/SDL.h>
+#endif
 
 // If MinGW, undefine `main()` from SDL_main.c
 #if MINGW
@@ -64,7 +68,11 @@ extern "C" {
 
 // OpenGL
 #if GLES
-  #include <SDL2/SDL_opengles2.h>
+  #if IOS || TVOS
+    #include "SDL2/SDL_opengles2.h"
+  #else
+    #include <SDL2/SDL_opengles2.h>
+  #endif
 #else
   #define GL_GLEXT_PROTOTYPES 1
   #if WINDOWS
@@ -74,9 +82,15 @@ extern "C" {
 #endif
 
 // SDL libraries
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_mixer.h>
-#include <SDL2/SDL_ttf.h>
+#if IOS || TVOS
+  #include "SDL2/SDL_image.h"
+  #include "SDL2/SDL_mixer.h"
+  #include "SDL2/SDL_ttf.h"
+#else
+  #include <SDL2/SDL_image.h>
+  #include <SDL2/SDL_mixer.h>
+  #include <SDL2/SDL_ttf.h>
+#endif
 
 // Simple 2D Definitions ///////////////////////////////////////////////////////
 
