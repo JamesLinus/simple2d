@@ -11,6 +11,15 @@ S2D_Window *S2D_CreateWindow(const char *title, int width, int height,
 
   S2D_Init();
 
+  SDL_DisplayMode dm;
+  SDL_GetCurrentDisplayMode(0, &dm);
+  // SDL_Log("SDL_GetNumVideoDisplays(): %i", SDL_GetNumVideoDisplays());
+  // SDL_Log("SDL_GetNumDisplayModes failed: %s", SDL_GetError());
+  // SDL_Log("Display #%d: current display mode is %dx%dpx @ %dhz.", 0, dm.w, dm.h, dm.refresh_rate);
+
+  width  = width  == S2D_DISPLAY_WIDTH  ? dm.w : width;
+  height = height == S2D_DISPLAY_HEIGHT ? dm.h : height;
+
   // Allocate window and set default values
   S2D_Window *window      = (S2D_Window *) malloc(sizeof(S2D_Window));
   window->sdl             = NULL;
@@ -78,6 +87,10 @@ int S2D_Show(S2D_Window *window) {
 
     window->width  = actual_width;
     window->height = actual_height;
+    window->orig_width  = actual_width;
+    window->orig_height = actual_height;
+    window->viewport.width  = actual_width;
+    window->viewport.height = actual_height;
   }
 
   // Set Up OpenGL /////////////////////////////////////////////////////////////
