@@ -13,9 +13,8 @@ S2D_Window *S2D_CreateWindow(const char *title, int width, int height,
 
   SDL_DisplayMode dm;
   SDL_GetCurrentDisplayMode(0, &dm);
-  // SDL_Log("SDL_GetNumVideoDisplays(): %i", SDL_GetNumVideoDisplays());
-  // SDL_Log("SDL_GetNumDisplayModes failed: %s", SDL_GetError());
-  // SDL_Log("Display #%d: current display mode is %dx%dpx @ %dhz.", 0, dm.w, dm.h, dm.refresh_rate);
+  sprintf(S2D_msg, "Current display mode is %dx%dpx @ %dhz", dm.w, dm.h, dm.refresh_rate);
+  S2D_Log(S2D_msg, S2D_INFO);
 
   width  = width  == S2D_DISPLAY_WIDTH  ? dm.w : width;
   height = height == S2D_DISPLAY_HEIGHT ? dm.h : height;
