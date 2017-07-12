@@ -217,8 +217,13 @@ void S2D_GL_SetViewport(S2D_Window *window) {
  */
 int S2D_GL_Init(S2D_Window *window) {
 
-  // Specify the OpenGL Context
-  #if !GLES
+  // Specify OpenGL contexts and set attributes
+  #if GLES
+    SDL_GL_SetAttribute(SDL_GL_RED_SIZE,   8);
+    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE,  8);
+    SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
+  #else
     // Use legacy OpenGL 2.1
     if (FORCE_GL2) {
       SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
