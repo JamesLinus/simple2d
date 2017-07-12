@@ -31,13 +31,13 @@ void S2D_Log(const char *msg, int type) {
   if (S2D_diagnostics) {
     switch (type) {
       case S2D_INFO:
-        printf("\033[4;36mInfo:\033[0m %s\n", msg);
+        printf("\033[1;36mInfo:\033[0m %s\n", msg);
         break;
       case S2D_WARN:
-        printf("\033[4;33mWarning:\033[0m %s\n", msg);
+        printf("\033[1;33mWarning:\033[0m %s\n", msg);
         break;
       case S2D_ERROR:
-        printf("\033[4;31mError:\033[0m %s\n", msg);
+        printf("\033[1;31mError:\033[0m %s\n", msg);
         break;
       default:
         printf("%s\n", msg);
