@@ -13,8 +13,7 @@ S2D_Window *S2D_CreateWindow(const char *title, int width, int height,
 
   SDL_DisplayMode dm;
   SDL_GetCurrentDisplayMode(0, &dm);
-  sprintf(S2D_msg, "Current display mode is %dx%dpx @ %dhz", dm.w, dm.h, dm.refresh_rate);
-  S2D_Log(S2D_msg, S2D_INFO);
+  S2D_Log(S2D_INFO, "Current display mode is %dx%dpx @ %dhz", dm.w, dm.h, dm.refresh_rate);
 
   width  = width  == S2D_DISPLAY_WIDTH  ? dm.w : width;
   height = height == S2D_DISPLAY_HEIGHT ? dm.h : height;
@@ -79,11 +78,10 @@ int S2D_Show(S2D_Window *window) {
   SDL_GetWindowSize(window->sdl, &actual_width, &actual_height);
 
   if ((window->width != actual_width) || (window->height != actual_height)) {
-
-    sprintf(S2D_msg, "Scaling window to %ix%i (requested size was %ix%i)",
-      actual_width, actual_height, window->width, window->height);
-    S2D_Log(S2D_msg, S2D_INFO);
-
+    S2D_Log(S2D_INFO,
+      "Scaling window to %ix%i (requested size was %ix%i)",
+      actual_width, actual_height, window->width, window->height
+    );
     window->width  = actual_width;
     window->height = actual_height;
     window->orig_width  = actual_width;
@@ -112,7 +110,7 @@ int S2D_Show(S2D_Window *window) {
   // Enable VSync
   if (window->vsync) {
     if (!SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1")) {
-      S2D_Log("VSync cannot be enabled", S2D_WARN);
+      S2D_Log(S2D_WARN, "VSync cannot be enabled");
     }
   }
 
@@ -286,7 +284,7 @@ int S2D_Show(S2D_Window *window) {
  */
 int S2D_Close(S2D_Window *window) {
   if (!window->close) {
-    S2D_Log("Closing window", S2D_INFO);
+    S2D_Log(S2D_INFO, "Closing window");
     window->close = true;
   }
   return 0;

@@ -137,7 +137,6 @@ extern "C" {
 
 // Internal Shared Data ////////////////////////////////////////////////////////
 
-extern char S2D_msg[1024];    // for S2D_Log messages
 extern bool S2D_diagnostics;  // flag for whether to print diagnostics with S2D_Log
 
 // Type Definitions ////////////////////////////////////////////////////////////
@@ -287,7 +286,7 @@ bool S2D_FileExists(const char *path);
 /*
  * Logs standard messages to the console
  */
-void S2D_Log(const char *msg, int type);
+void S2D_Log(int type, const char *msg, ...);
 
 /*
  * Logs Simple 2D errors to the console, with caller and message body
