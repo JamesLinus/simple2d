@@ -37,11 +37,11 @@ INSTALLER_FNAME=simple2d-windows-mingw.zip
 # Helper functions
 
 define task_msg
-	@printf "\n\033[1;34m==>\033[1;39m $(1)\033[0m\n\n"
+	@printf "\n\033[1;34m==>\033[39m $(1)\033[0m\n\n"
 endef
 
 define info_msg
-	@printf "\033[1;36mInfo:\e[39m $(1)\n"
+	@printf "\033[1;36mInfo:\e[39m $(1)\033[0m\n"
 endef
 
 define run_test
