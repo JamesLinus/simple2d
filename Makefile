@@ -189,4 +189,28 @@ audio:
 controller:
 	$(call run_test,controller)
 
+ios:
+ifeq ($(shell test -d build/ios/Simple2D.framework; echo $$?),1)
+	$(error Simple2D.framework missing, run `release` target first)
+endif
+	$(call task_msg,Running iOS test)
+	cp -r deps/xcode/ios/* build/ios
+	cp test/triangle-ios-tvos.c build/ios/main.c
+	cd build/ios && xcodebuild -sdk iphonesimulator | $(XCPRETTY)
+	open -a Simulator
+	xcrun simctl install booted build/ios/build/Release-iphonesimulator/MyApp.app
+	xcrun simctl launch booted Simple2D.MyApp
+
+tvos:
+ifeq ($(shell test -d build/tvos/Simple2D.framework; echo $$?),1)
+	$(error Simple2D.framework missing, run `release` target first)
+endif
+	$(call task_msg,Running tvOS test)
+	cp -r deps/xcode/tvos/* build/tvos
+	cp test/triangle-ios-tvos.c build/tvos/main.c
+	cd build/tvos && xcodebuild -sdk appletvsimulator | $(XCPRETTY)
+	open -a Simulator
+	xcrun simctl install booted build/tvos/build/Release-appletvsimulator/MyApp.app
+	xcrun simctl launch booted Simple2D.MyApp
+
 .PHONY: build test
