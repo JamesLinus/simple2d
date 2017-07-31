@@ -13,6 +13,12 @@ endif
 # Apple
 ifeq ($(shell uname),Darwin)
 	PLATFORM=apple
+	XCPRETTY_STATUS=$(shell xcpretty -v &>/dev/null; echo $$?)
+	ifeq ($(XCPRETTY_STATUS),0)
+		XCPRETTY=xcpretty
+	else
+		XCPRETTY=cat
+	endif
 endif
 
 # Linux
@@ -87,13 +93,16 @@ install:
 ifeq ($(PLATFORM),apple)
 release: clean all
 	$(call task_msg,Building iOS and tvOS release)
+ifneq ($(XCPRETTY_STATUS),0)
+	$(call info_msg,xcpretty not found!)
+	$(call info_msg,  Run \`gem install xcpretty\` for nicer xcodebuild output.)
+endif
 	cp -r deps/xcode/Simple2D.xcodeproj build
-	# TODO: make xcpretty optional
 	cd build && \
-	xcodebuild -sdk iphoneos         | xcpretty && \
-	xcodebuild -sdk iphonesimulator  | xcpretty && \
-	xcodebuild -sdk appletvos        | xcpretty && \
-	xcodebuild -sdk appletvsimulator | xcpretty
+	xcodebuild -sdk iphoneos         | $(XCPRETTY) && \
+	xcodebuild -sdk iphonesimulator  | $(XCPRETTY) && \
+	xcodebuild -sdk appletvos        | $(XCPRETTY) && \
+	xcodebuild -sdk appletvsimulator | $(XCPRETTY)
 	mkdir -p build/Release-ios-universal
 	mkdir -p build/Release-tvos-universal
 	lipo build/Release-iphoneos/libsimple2d.a  build/Release-iphonesimulator/libsimple2d.a  -create -output build/Release-ios-universal/libsimple2d.a
