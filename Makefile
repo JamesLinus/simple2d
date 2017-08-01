@@ -91,6 +91,18 @@ install:
 	cp build/simple2d      $(PREFIX)/bin/
 
 ifeq ($(PLATFORM),apple)
+install-frameworks:
+ifeq ($(shell test -d build/ios/Simple2D.framework && test -d build/tvos/Simple2D.framework; echo $$?),1)
+	$(error Frameworks missing, run `release` target first)
+endif
+	$(call task_msg,Installing iOS and tvOS frameworks)
+	mkdir -p $(PREFIX)/Frameworks/Simple2D/iOS/
+	mkdir -p $(PREFIX)/Frameworks/Simple2D/tvOS/
+	cp -r build/ios/Simple2D.framework  $(PREFIX)/Frameworks/Simple2D/iOS/
+	cp -r build/tvos/Simple2D.framework $(PREFIX)/Frameworks/Simple2D/tvOS/
+endif
+
+ifeq ($(PLATFORM),apple)
 release: clean all
 	$(call task_msg,Building iOS and tvOS release)
 ifneq ($(XCPRETTY_STATUS),0)
@@ -160,9 +172,12 @@ endif
 
 uninstall:
 	$(call task_msg,Uninstalling)
-	rm -f /usr/local/include/simple2d.h
-	rm -f /usr/local/lib/libsimple2d.a
-	rm -f /usr/local/bin/simple2d
+	rm -f  /usr/local/include/simple2d.h
+	rm -f  /usr/local/lib/libsimple2d.a
+	rm -f  /usr/local/bin/simple2d
+ifeq ($(PLATFORM),apple)
+	rm -rf /usr/local/Frameworks/Simple2D/
+endif
 
 test:
 	$(call task_msg,Building tests)
@@ -189,6 +204,7 @@ audio:
 controller:
 	$(call run_test,controller)
 
+ifeq ($(PLATFORM),apple)
 ios:
 ifeq ($(shell test -d build/ios/Simple2D.framework; echo $$?),1)
 	$(error Simple2D.framework missing, run `release` target first)
@@ -200,7 +216,9 @@ endif
 	open -a Simulator
 	xcrun simctl install booted build/ios/build/Release-iphonesimulator/MyApp.app
 	xcrun simctl launch booted Simple2D.MyApp
+endif
 
+ifeq ($(PLATFORM),apple)
 tvos:
 ifeq ($(shell test -d build/tvos/Simple2D.framework; echo $$?),1)
 	$(error Simple2D.framework missing, run `release` target first)
@@ -212,5 +230,6 @@ endif
 	open -a Simulator
 	xcrun simctl install booted build/tvos/build/Release-appletvsimulator/MyApp.app
 	xcrun simctl launch booted Simple2D.MyApp
+endif
 
 .PHONY: build test
