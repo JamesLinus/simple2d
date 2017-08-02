@@ -36,9 +36,11 @@ endif
 SOURCES=$(notdir $(wildcard src/*.c))
 OBJECTS=$(addprefix build/,$(notdir $(SOURCES:.c=.o)))
 
+VERSION=$(shell bash bin/simple2d.sh -v)
+
 # Install directory and filename for the MinGW Windows installer
 INSTALLER_DIR=build/win-installer-mingw
-INSTALLER_FNAME=simple2d-windows-mingw.zip
+INSTALLER_FNAME=simple2d-windows-mingw-$(VERSION).zip
 
 # Helper functions
 
@@ -98,8 +100,8 @@ endif
 	$(call task_msg,Installing iOS and tvOS frameworks)
 	mkdir -p $(PREFIX)/Frameworks/Simple2D/iOS/
 	mkdir -p $(PREFIX)/Frameworks/Simple2D/tvOS/
-	cp -r build/ios/Simple2D.framework  $(PREFIX)/Frameworks/Simple2D/iOS/
-	cp -r build/tvos/Simple2D.framework $(PREFIX)/Frameworks/Simple2D/tvOS/
+	cp -R build/ios/Simple2D.framework  $(PREFIX)/Frameworks/Simple2D/iOS/
+	cp -R build/tvos/Simple2D.framework $(PREFIX)/Frameworks/Simple2D/tvOS/
 endif
 
 ifeq ($(PLATFORM),apple)
@@ -109,7 +111,7 @@ ifneq ($(XCPRETTY_STATUS),0)
 	$(call info_msg,xcpretty not found!)
 	$(call info_msg,  Run \`gem install xcpretty\` for nicer xcodebuild output.)
 endif
-	cp -r deps/xcode/Simple2D.xcodeproj build
+	cp -R deps/xcode/Simple2D.xcodeproj build
 	cd build && \
 	xcodebuild -sdk iphoneos         | $(XCPRETTY) && \
 	xcodebuild -sdk iphonesimulator  | $(XCPRETTY) && \
@@ -126,14 +128,21 @@ endif
 	mkdir -p build/tvos/Simple2D.framework/Headers
 	cp include/simple2d.h build/ios/Simple2D.framework/Headers
 	cp include/simple2d.h build/tvos/Simple2D.framework/Headers
-	cp -r deps/ios/include/SDL2  build/ios/Simple2D.framework/Headers
-	cp -r deps/tvos/include/SDL2 build/tvos/Simple2D.framework/Headers
+	cp -R deps/ios/include/SDL2  build/ios/Simple2D.framework/Headers
+	cp -R deps/tvos/include/SDL2 build/tvos/Simple2D.framework/Headers
 	cp deps/xcode/Info.plist build/ios/Simple2D.framework/Info.plist
 	cp deps/xcode/Info.plist build/tvos/Simple2D.framework/Info.plist
 	mv build/ios/Simple2D  build/ios/Simple2D.framework
 	mv build/tvos/Simple2D build/tvos/Simple2D.framework
+	mkdir -p build/apple-frameworks/Simple2D/iOS
+	mkdir -p build/apple-frameworks/Simple2D/tvOS
+	cp -R build/ios/*  build/apple-frameworks/Simple2D/iOS/
+	cp -R build/tvos/* build/apple-frameworks/Simple2D/tvOS/
+	cd build/apple-frameworks; zip -r simple2d-apple-frameworks-$(VERSION).zip *
+	mv build/apple-frameworks/simple2d-apple-frameworks-$(VERSION).zip build/
 	$(call info_msg,iOS framework built at \`build/ios/Simple2D.framework\`)
 	$(call info_msg,tvOS framework built at \`build/tvos/Simple2D.framework\`)
+	$(call info_msg,Frameworks zipped at \`build/simple2d-apple-frameworks-$(VERSION).zip\`)
 endif
 
 ifeq ($(PLATFORM),mingw)
@@ -210,7 +219,7 @@ ifeq ($(shell test -d build/ios/Simple2D.framework; echo $$?),1)
 	$(error Simple2D.framework missing, run `release` target first)
 endif
 	$(call task_msg,Running iOS test)
-	cp -r deps/xcode/ios/* build/ios
+	cp -R deps/xcode/ios/* build/ios
 	cp test/triangle-ios-tvos.c build/ios/main.c
 	cd build/ios && xcodebuild -sdk iphonesimulator | $(XCPRETTY)
 	open -a Simulator
@@ -224,7 +233,7 @@ ifeq ($(shell test -d build/tvos/Simple2D.framework; echo $$?),1)
 	$(error Simple2D.framework missing, run `release` target first)
 endif
 	$(call task_msg,Running tvOS test)
-	cp -r deps/xcode/tvos/* build/tvos
+	cp -R deps/xcode/tvos/* build/tvos
 	cp test/triangle-ios-tvos.c build/tvos/main.c
 	cd build/tvos && xcodebuild -sdk appletvsimulator | $(XCPRETTY)
 	open -a Simulator
