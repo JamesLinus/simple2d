@@ -8,7 +8,7 @@ If you encounter any issues, ping the [mailing list](https://groups.google.com/d
 
 ## Getting started
 
-Simple 2D supports all major operating systems and hardware platforms, and is tested on the latest releases of macOS, Windows, Ubuntu, and Raspbian (on the Raspberry Pi).
+Simple 2D supports all major operating systems and hardware platforms, and is tested on the latest releases of macOS, iOS, tvOS, Windows, Ubuntu, and Raspbian (on the Raspberry Pi).
 
 To install the [latest release](https://github.com/simple2d/simple2d/releases/latest)...
 
@@ -20,6 +20,8 @@ Use [Homebrew](http://brew.sh):
 brew tap simple2d/tap
 brew install simple2d
 ```
+
+The Homebrew formula will also install the iOS and tvOS frameworks.
 
 ### ...on Windows
 
@@ -49,7 +51,7 @@ Alternatively, you can compile and install Simple 2D from source. First clone th
 git clone --recursive https://github.com/simple2d/simple2d.git
 ```
 
-To keep the size of this repository small, [Git submodules](https://git-scm.com/book/en/Git-Tools-Submodules) are used to reference [test media](https://github.com/simple2d/test_media) and [Windows dependencies](https://github.com/simple2d/windows-deps). The `--recursive` flag ensures submodules are initialize and updated when this repo is cloned. If you happened to clone this repo without the `--recursive` flag, you can still initialize and update submodules with:
+To keep the size of this repository small, [Git submodules](https://git-scm.com/book/en/Git-Tools-Submodules) are used to reference [test media](https://github.com/simple2d/test_media) and [dependencies](https://github.com/simple2d/deps). The `--recursive` flag ensures submodules are initialize and updated when this repo is cloned. If you happened to clone this repo without the `--recursive` flag, you can still initialize and update submodules with:
 
 ```bash
 git submodule init
@@ -70,9 +72,13 @@ On Windows using Visual C++, open a 64-bit Visual Studio command prompt and run:
 nmake /f NMakefile all install
 ```
 
-Note that on macOS and Linux, the makefile will not check for or install dependencies, unlike installing via Homebrew or the `simple2d.sh` script, respectively. Dependencies for Windows, supporting both Visual C++ and MinGW, _are_ included in this repo (referenced by the [`windows-deps`](https://github.com/simple2d/windows-deps) submodule) and installed by both makefiles.
+Note that on macOS and Linux, the makefile will not check for or install dependencies, unlike installing via Homebrew or the `simple2d.sh` script, respectively. Dependencies for Windows, supporting both Visual C++ and MinGW, _are_ included in this repo (referenced by the [`deps`](https://github.com/simple2d/deps) submodule) and installed by both makefiles.
 
 On Windows using Visual C++, Simple 2D will be installed to `%LOCALAPPDATA%\simple2d`, so make sure to add that to your path (for example with `set PATH=%PATH%;%LOCALAPPDATA%\simple2d`). In all other cases, it will be installed to `/usr/local/`. On Windows using MinGW, make sure to add `/usr/local/bin` to your path as well.
+
+### Building release archives
+
+To build the release archives, which are attached as [downloads with each release](https://github.com/simple2d/simple2d/releases/latest), run `make release` on macOS and Windows using MinGW, and `nmake /f NMakefile release` on Windows using Visual C++.
 
 ## Tests
 
@@ -83,6 +89,7 @@ Simple 2D has a few test programs to make sure everything is working as it shoul
 - [`testcard.c`](test/testcard.c) — A graphical card, similar to [TV test cards](https://en.wikipedia.org/wiki/Test_card), with the goal of ensuring visuals and inputs are working properly.
 - [`audio.c`](test/audio.c) — Tests audio functions with various file formats interpreted as sound samples and music.
 - [`controller.c`](test/controller.c) — Provides visual and numeric feedback of controller input.
+- [`triangle-ios-tvos.c`](test/triangle-ios-tvos.c) — A modified `triangle.c` designed for iOS and tvOS devices. Open an iOS simulator and run `make ios`, or open a tvOS simulator and run `make tvos`, to build and launch the program.
 
 ### Building and running tests
 
@@ -648,14 +655,14 @@ Check out the [open issues](https://github.com/simple2d/simple2d/issues) and joi
 1. [Run tests](#tests) on all supported platforms
 2. Update documentation to reflect the current API
 3. Update the version number in [`simple2d.sh`](bin/simple2d.sh) and [`simple2d.cmd`](bin/simple2d.cmd), commit changes
-4. Create Windows installers for Visual C++ and MinGW
-5. Create a [new release](https://github.com/simple2d/simple2d/releases) in GitHub, with tag in the form `v#.#.#`; attach Windows installers to release notes
+4. Create Windows installers (for Visual C++ and MinGW) and Apple frameworks using the `release` make/nmake target
+5. Create a [new release](https://github.com/simple2d/simple2d/releases) in GitHub, with tag in the form `v#.#.#`; attach Windows installers and Apple frameworks to release notes
 6. Update the [Homebrew tap](https://github.com/simple2d/homebrew-tap):
-  - Update formula with new release archive `url`
-  - Run `brew audit --strict ./simple2d.rb` to detect any issues
-  - Calculate the new `sha256` using `brew install ./simple2d.rb` (note the "SHA256 mismatch" error, use the "Actual" value)
-  - Test installation using the same `brew install` command above
-  - Commit changes to the formula
+    - Update formula with new release archive and frameworks resource URLs
+    - Calculate the new `sha256` checksums for the release and frameworks archive, using `shasum -a 256 <file>`
+    - Run `brew audit --strict ./simple2d.rb` to detect any issues with the formula
+    - Test installation of the formula using `brew install ./simple2d.rb`
+    - Commit and push changes to the formula
 7. 🎉
 
 # About the project
